@@ -53,5 +53,9 @@ class State(val matrix: IndexedSeq[Int], val i0: Int, val j0: Int, val pre: Stat
   }
 }
 object State {
+  def apply(r1: (Int, Int, Int), r2: (Int, Int, Int), r3: (Int, Int, Int)): State = {
+    val matrix = IndexedSeq(r1._1, r1._2, r1._3, r2._1, r2._2, r2._3, r3._1, r3._2, r3._3)
+    new State(matrix, 0, 0, null)
+  }
   def apply(matrix: IndexedSeq[Int], i0: Int, j0: Int, pre: State): State = new State(matrix, i0, j0, pre)
 }
