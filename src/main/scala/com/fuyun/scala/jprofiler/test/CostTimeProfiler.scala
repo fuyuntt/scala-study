@@ -6,15 +6,17 @@ package com.fuyun.scala.jprofiler.test
 class CostTimeProfiler(points: String*) {
   private val len = points.size
   private val checkPoints = Array.ofDim[Long](len - 1)
+  private var startTimes = 0
   private var index = 0
   private var preTime = 0L
 
   def start(): Unit = {
     preTime = System.nanoTime()
     index = 0
+    startTimes += 1
   }
 
-  def check(): Unit = {
+  def check(symbol: Any*): Unit = {
     val now = System.nanoTime()
     checkPoints(index) += now - preTime
     index += 1
@@ -22,7 +24,7 @@ class CostTimeProfiler(points: String*) {
   }
 
   def statistics(): String = {
-    points.zipWithIndex
+    val detail = points.zipWithIndex
       .flatMap { case (point, i) =>
         val lit = List(point)
         if (i < len - 1)
@@ -31,9 +33,11 @@ class CostTimeProfiler(points: String*) {
           lit
       }
       .mkString(" ")
+    s"times: $startTimes \ndetail: $detail"
   }
 
   def reset(): Unit = {
     (0 until(len - 1)).foreach(checkPoints(_) = 0)
+    startTimes = 0
   }
 }
