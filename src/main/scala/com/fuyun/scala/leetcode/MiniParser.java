@@ -1,4 +1,4 @@
-package com.fuyun.scala;
+package com.fuyun.scala.leetcode;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,24 +9,53 @@ import java.util.regex.Pattern;
  * https://leetcode.com/problems/mini-parser
  */
 public class MiniParser {
-    private Pattern pattern = Pattern.compile("\\[[^\\[\\]]*\\]|-?\\d+");
+    private Pattern pattern = Pattern.compile("\\[|-?\\d+");
 
     public static void main(String[] args) {
         new MiniParser().deserialize("[-1]");
     }
 
-    private NestedInteger deserialize(String str) {
+    public NestedInteger deserialize(String str) {
         if (str.charAt(0) != '[') {
             return new NestedInteger(Integer.valueOf(str));
         }
         str = str.substring(1, str.length() - 1);
         Matcher matcher = pattern.matcher(str);
         NestedInteger integer = new NestedInteger();
-        while (matcher.find()) {
-            String group = matcher.group();
-            integer.add(deserialize(group));
+        int cur = 0;
+        while (matcher.find(cur)) {
+            int start = matcher.start();
+            if (str.charAt(start) == '[') {
+                int end = findPair(str, start);
+                integer.add(deserialize(str.substring(start, end + 1)));
+                cur = end + 1;
+            } else {
+                integer.add(deserialize(matcher.group()));
+                cur = matcher.end();
+            }
         }
         return integer;
+    }
+
+    private int findPair(String str, int start) {
+        if (str.charAt(start) != '[') {
+            throw new IllegalArgumentException();
+        }
+
+        int dep = 1;
+        int cur = start;
+        while (dep > 0) {
+            cur ++;
+            if (cur >= str.length()) {
+                throw new IllegalArgumentException("not 匹配");
+            }
+            if (str.charAt(cur) == '[') {
+                dep++;
+            } else if (str.charAt(cur) == ']') {
+                dep--;
+            }
+        }
+        return cur;
     }
 
     // This is the interface that allows for creating nested lists.
