@@ -41,6 +41,6 @@ public class SubTree {
     }
 
     private String treeToStr(Node root) {
-        return root == null ? "" : (root.value + ";" + treeToStr(root.left) + treeToStr(root.right));
+        return root == null ? "-;" : (root.value + ";" + treeToStr(root.left) + treeToStr(root.right));
     }
 }
